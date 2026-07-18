@@ -2,19 +2,44 @@ plugins {
     id 'java'
 }
 
-group = 'org.example'
+group = 'com.dibimbing.qa'
 version = '1.0-SNAPSHOT'
+
+// Memastikan proyek dikompilasi menggunakan target java JDK 17
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // 1. DIUBAH KE implementation: Agar folder src/main/java bisa membaca Selenium & By
+    implementation 'org.seleniumhq.selenium:selenium-java:4.21.0'
+
+    // 2. DIUBAH KE implementation: Agar DriverFactory di folder src/main/ bisa membaca WebDriverManager
+    implementation 'io.github.bonigarcia:webdrivermanager:5.8.0'
+
+    // 3. Biarkan tetap testImplementation karena ini khusus di folder src/test/
+    testImplementation 'io.cucumber:cucumber-java:7.18.0'
+    testImplementation 'io.cucumber:cucumber-testng:7.18.0'
+    testImplementation 'org.testng:testng:7.10.2'
+
+    // 🎯 PENYELAMATAN API: Diubah ke implementation agar file REST Assured Anda di folder src/main/java terbebas dari error merah
+    implementation 'io.rest-assured:rest-assured:5.4.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
 }
 
+
 test {
-    useJUnitPlatform()
+    outputs.upToDateWhen { false } // Memaksa Gradle selalu menjalankan test baru
+    useTestNG() {
+        suites 'src/test/resources/testng.xml' // Membaca skenario dari berkas xml
+    }
+    testLogging {
+        events "passed", "skipped", "failed"
+        showStandardStreams = true // Menampilkan log live di terminal
+    }
 }

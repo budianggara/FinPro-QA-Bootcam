@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 🎯 PERBAIKAN 1: Menyempurnakan alamat URL DTD TestNG resmi -->
+<!DOCTYPE suite SYSTEM "https://testng.org">
+<suite name="LMS B2B Final Project Suite" parallel="tests" thread-count="2">
+
+    <!-- Kelompok 1: Menjalankan Robot Web UI Selenium Cucumber -->
+    <test name="Web UI Automation Tests">
+        <classes>
+            <class name="runner.TestRunner"/>
+        </classes>
+    </test>
+
+    <!-- Kelompok 2: Menjalankan Robot Backend API REST Assured GraphQL -->
+    <test name="API GraphQL Automation Tests">
+        <classes>
+            <!-- 🎯 PERBAIKAN 2: Menyinkronkan nama Class API REST Assured yang sudah bersih dari warna merah -->
+            <class name="api.tests.graphql.announcement.ClassManagementApiTest"/>
+        </classes>
+    </test>
+</suite>

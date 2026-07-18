@@ -1,0 +1,46 @@
+name: QA Automation Finpro CI-CD Pipeline
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  automation-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Mengunduh source code framework Anda
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # 2. Memasang lingkungan Java JDK 17
+      - name: Set up Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      # 3.  Memasang Google Chrome Virtual Headless di dalam mesin Ubuntu Cloud GitHub
+      - name: Setup Google Chrome Headless for Selenium
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      # 4. Memberikan izin eksekusi Gradle wrapper
+      - name: Grant Execute Permission for Gradle Wrapper
+        run: chmod +x gradlew
+
+      # 5. Menjalankan otomasi (Ditambahkan flag headless agar Selenium UI tidak memicu eror monitor)
+      - name: Run Automation Testing (Selenium UI & REST Assured API)
+        run: ./gradlew test -DchromeHeadless=true --info
+
+      # 6. Mengunggah laporan pengujian otomatisasi Anda ke server GitHub
+      - name: Upload Test Automation Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: QA-Automation-Execution-Report
+          path: build/reports/tests/test/
